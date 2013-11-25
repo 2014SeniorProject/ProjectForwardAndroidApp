@@ -1,0 +1,93 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context=".Connect" >
+	
+   <TextView
+        android:id="@+id/heart_ratecap_display"
+       
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Heart Rate Cap: " />  
+   <TextView
+        android:id="@+id/wheel_size_display"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/heart_ratecap_display"
+        android:text="Wheel Size: " /> 
+   
+   <TextView
+        android:id="@+id/top_connect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wheel_size_display"
+        android:text="Actual Heart Rate: " /> 
+    
+    <TextView
+        android:id="@+id/top_connect2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_connect"
+        android:text="Degrees of Inclination: " />
+    
+    <TextView
+        android:id="@+id/top_connect3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_connect2"
+        android:text="Speed: " />
+    <Button 
+        android:id="@+id/connect_but"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_connect3"
+        android:layout_centerVertical= "true"
+        android:text="Connect to Device"/>   
+        
+    <EditText android:id="@+id/edit_heartrate"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/connect_but"
+		android:inputType="number"
+        android:hint="Enter Heart Rate Cap." />
+    
+    <Button 
+        android:id="@+id/set_heart"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/edit_heartrate"
+		android:layout_below="@id/connect_but"
+        android:text="Set"
+        android:onClick="setHeart"/>
+    
+    <EditText android:id="@+id/edit_wheelSize"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_heartrate"
+        android:inputType="number"
+        android:hint="Enter Wheel Size." />
+    
+    <Button 
+        android:id="@+id/set_wheel"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_heartrate"
+        android:layout_toRightOf="@id/edit_wheelSize"
+        android:text="Set"
+        android:onClick="setWheel"/>
+
+      <Button 
+        android:id="@+id/send_but2"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/edit_wheelSize"
+        android:layout_centerHorizontal= "false"
+        android:text="Begin Display"
+        android:onClick="sendByte2"/>
+
+</RelativeLayout>
