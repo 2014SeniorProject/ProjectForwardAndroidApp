@@ -9,8 +9,7 @@
     tools:context=".Connect" >
 	
    <TextView
-        android:id="@+id/heart_ratecap_display"
-       
+        android:id="@+id/heart_ratecap_display"       
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Heart Rate Cap: " />  
@@ -41,11 +40,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/top_connect2"
         android:text="Speed: " />
+    
+    <TextView
+        android:id="@+id/ADC_display"       
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_connect3"
+        android:text="ADC Data: " />
+    
     <Button 
         android:id="@+id/connect_but"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_below="@id/top_connect3"
+        android:layout_below="@id/ADC_display"
         android:layout_centerVertical= "true"
         android:text="Connect to Device"/>   
         
@@ -89,5 +96,14 @@
         android:layout_centerHorizontal= "false"
         android:text="Begin Display"
         android:onClick="sendByte2"/>
+      
+      <Button 
+        android:id="@+id/write_test"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/send_but2"
+        android:layout_centerHorizontal= "false"
+        android:text="Write Test"
+        android:onClick="writeTest"/>
 
 </RelativeLayout>
