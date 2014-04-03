@@ -32,6 +32,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 //||
@@ -51,13 +52,16 @@ public class Connect extends Activity {
     public OutputStream myOutput;
     public double input= 0; 
     public int heartRateCap = 0;
-    public int wheelSize = 0;
+    public int wheelSize = 30;
     public File data;
     File file;
     private Handler loopHandler = new Handler();
     OutputStream os = null;
     public int connectedFlag = 0;
     public Timestamp myTime;
+    private Handler myHandler = new Handler();
+    private ProgressBar mProgress;
+    public int progressbar = 0;
  
     //| 
  	//| When the application opens, just set up the screen as defined in activity_connect.xml and set
@@ -77,7 +81,7 @@ public class Connect extends Activity {
         	//This functions connects to the RN-41 on the FPGA when the connect button is pressed.
         	//----------------------------------------------------------------------------------------------
             public void onClick(View v) {
-            	//myTime = new Timestamp(System.currentTimeMillis());
+            	myTime = new Timestamp(System.currentTimeMillis());
             	
             	
             	//Set up the Bluetooth adapter on the phone, and use it to get a list of bonded devices.
@@ -162,8 +166,10 @@ public class Connect extends Activity {
             	    //| Open File for writing data to.
             	    //| --------------------------------------------------------
             	    Environment.getExternalStorageState();
+            	    myTime.setTime(System.currentTimeMillis());
+            	    
             		data = getAlbumStorageDir("dat.csv");
-            		file = new File(data, "data.csv");            		
+            		file = new File(data,myTime.toString()+"data.csv");            		
             		
             		try {
 						os = new FileOutputStream(file);
@@ -174,7 +180,9 @@ public class Connect extends Activity {
             		try {
             			os.write("Time_Stamp".getBytes());
             			os.write(',');
-            			os.write("Heart_Rate".getBytes());
+            			os.write("Heart_Rate Cap".getBytes());
+            			os.write(',');
+            			os.write("User Heart_Rate".getBytes());
             			os.write(',');
             			os.write("Inclination_Angle".getBytes());
             			os.write(',');
@@ -202,19 +210,35 @@ public class Connect extends Activity {
 			int ADCL = 0;
 			int ADCH = 0;
 			double ADCfull = 0;
+			int heartCount = 0;
+			int angleCount = 0;
+			int speedCount = 0;
+			int adcCount = 0;
+			double previousHR = 0;
+			double previousAngle = 0;
+			double previousSpeed = 0;
+			double previousADC = 0;
+			//final int progressbar = 0;
 			
-			//myTime.setTime(myTime.getTime());
+			mProgress = (ProgressBar) findViewById(R.id.progressBar1);
+			
+			myTime.setTime(System.currentTimeMillis());
 			//| 
 			//| Log Time Stamp data to file	
 			try {
-				//os.write(myTime.toString().getBytes());
-				os.write("Time".getBytes());
+				os.write(myTime.toString().getBytes());
+				//os.write("Time".getBytes());
 				os.write(',');
+				os.write(new DecimalFormat("###.##").format(heartRateCap).getBytes());
+				os.write(',');
+				//os.write("Time".getBytes());
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-	
+			
+			
+			
 			//| ----------------------------------------------------------
 			//| This will call for the Heart Rate 
 			//| ----------------------------------------------------------
@@ -238,6 +262,17 @@ public class Connect extends Activity {
 				e.printStackTrace();
 			}
 			
+			if((input == 0) && (previousHR != 0)){
+				heartCount++;
+				if(heartCount < 3){
+					input = previousHR;
+				}				
+			}else {
+				heartCount = 0;	
+				previousHR = input;
+			}
+			
+			
 			//| ---------------------------------------------------------
 		 	//| Display heart rate.
 		 	//| ---------------------------------------------------------
@@ -252,6 +287,7 @@ public class Connect extends Activity {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
+			
 			
 	 	    //| ----------------------------------------------------------------
 	 	    //| This will call for the inclination angle of the system
@@ -296,13 +332,22 @@ public class Connect extends Activity {
 				e.printStackTrace();
 		 	}
 		 	
-
+		 	if((input == 0) && (previousAngle != 0)){
+				angleCount++;
+				if(angleCount < 3){
+					input = previousAngle;
+				}				
+			}else {
+				angleCount = 0;	
+				previousAngle = input;
+			}
 		 	
 		 	//| ---------------------------------------------------------
 		 	//| Calculate and display the angle of inclination.
 		 	//| ---------------------------------------------------------
 			TextView t5 = (TextView)findViewById(R.id.top_connect2);
-	 	    if(signByte == 0){
+	 	    if(signByte < 2){
+	 	    		
 	 	    	 input = input/2.8;
 	 	    	 t5.setText("Angle of inclination = "+new DecimalFormat("###.##").format(input)+" degrees");
 	 	    	
@@ -330,7 +375,7 @@ public class Connect extends Activity {
 				}				
 	 	    }
 	 	
-
+		 
 	 	    //| -------------------------------------------------------------
 	 	    //| This will call for the speed of the system
 	 	    //| -------------------------------------------------------------    
@@ -345,21 +390,23 @@ public class Connect extends Activity {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-	 	   /* 
-	 	    //------------------------------------------------------			 
-			//Sleep
-	 	    try {
-	 	       Thread.sleep(20);
-	 	   	} catch (InterruptedException e) {
-	 	       e.printStackTrace();
-	 	   	}
-	 	    //------------------------------------------------------
-	 	    */
+
     		try {
     			//if (myInput.available()>0)		//*********************************
     			input = myInput.read();
     		} catch (IOException e) {
 				e.printStackTrace();
+			}
+    		
+    		
+    		if((input == 0) && (previousSpeed != 0)){
+				speedCount++;
+				if(speedCount < 3){
+					input = previousSpeed;
+				}				
+			}else {
+				speedCount = 0;	
+				previousSpeed = input;
 			}
     		
     		//| ---------------------------------------------------------
@@ -378,7 +425,7 @@ public class Connect extends Activity {
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			}
-  
+			
 	 	    //|
 	 	    //| Receive 12 bit ADC data
 	 	    //| --------------------------------------------------------------------
@@ -395,13 +442,6 @@ public class Connect extends Activity {
 				e.printStackTrace();
 			}
 			
-			/*
-	 	    try {
-	 	       Thread.sleep(20);
-	 	    } catch (InterruptedException e) {
-	 	       e.printStackTrace();
-	 	    }
-	 	   */
 			try {
 				//if (myInput.available()>0)		//*********************************
 				ADCL = myInput.read();
@@ -409,8 +449,7 @@ public class Connect extends Activity {
 				e.printStackTrace();
 			}
 			
-			//|High byte
-			
+			//|High byte			
 			try {
 				do	{
 					myOutput.write(8);
@@ -433,19 +472,38 @@ public class Connect extends Activity {
 			}
 			ADCH = ADCH*256;
 			ADCfull = ADCH + ADCL;
-			ADCfull = ADCfull - 508;
-			ADCfull = ADCfull/939;
-			//| Display ADC to screen and log to file
-			TextView t12 = (TextView)findViewById(R.id.ADC_display);
-	 	    t12.setText("ADC data = "+ADCfull);
-	 	    
-	 	    
+			
+			if((ADCfull == 0) && (previousADC != 0)){
+				adcCount++;
+				if(adcCount < 3){
+					ADCfull = previousADC;
+				}				
+			}else {
+				angleCount = 0;	
+				previousADC = ADCfull;
+			}
+			
 			try {
-				os.write(Double.toString(ADCfull).getBytes());
+				os.write(new DecimalFormat("###.##").format(ADCfull).getBytes());
 				os.write(',');
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			}
+			}			
+			
+			
+			//ADCfull = ADCfull/902;
+			String ADCfinal = new DecimalFormat("###.##").format(ADCfull);
+			progressbar = (int)ADCfull; 
+			myHandler.post(new Runnable() { public void run() {
+                    mProgress.setProgress(progressbar);
+                }
+			});
+			
+			//| Display ADC to screen and log to file
+			TextView t12 = (TextView)findViewById(R.id.ADC_display);
+	 	    t12.setText("ADC data = "+ADCfinal);
+	 	    
+
  	    
 	 	    //| 
 			//| End line in the CSV
@@ -455,7 +513,7 @@ public class Connect extends Activity {
 				e1.printStackTrace();
 			}
     	
-	 	    loopHandler.postDelayed(sendByte3, 1000);	
+	 	    loopHandler.postDelayed(sendByte3, 200);	
     	}
     };
 	
@@ -478,7 +536,7 @@ public class Connect extends Activity {
 			e.printStackTrace();
 		}
 		 try {
- 	       Thread.sleep(50);
+ 	       Thread.sleep(100);
  	    } catch (InterruptedException e) {
  	       e.printStackTrace();
  	    }
@@ -508,7 +566,7 @@ public class Connect extends Activity {
  				e.printStackTrace();
  			}
  			 try {
- 	 	       Thread.sleep(50);
+ 	 	       Thread.sleep(100);
  	 	    } catch (InterruptedException e) {
  	 	       e.printStackTrace();
  	 	    }
@@ -536,7 +594,7 @@ public class Connect extends Activity {
 				e.printStackTrace();
 			}
 			 try {
-	 	       Thread.sleep(50);
+	 	       Thread.sleep(100);
 	 	    } catch (InterruptedException e) {
 	 	       e.printStackTrace();
 	 	    }
@@ -561,7 +619,7 @@ public class Connect extends Activity {
  				e.printStackTrace();
  			}
  			 try {
- 	 	       Thread.sleep(50);
+ 	 	       Thread.sleep(100);
  	 	    } catch (InterruptedException e) {
  	 	       e.printStackTrace();
  	 	    }
@@ -622,7 +680,7 @@ public class Connect extends Activity {
 	
 	public void sendByte2(View view){
 		if(connectedFlag ==1){
-			loopHandler.postDelayed(sendByte3, 1000);
+			loopHandler.postDelayed(sendByte3, 10);
 		}		
 	}	
 	

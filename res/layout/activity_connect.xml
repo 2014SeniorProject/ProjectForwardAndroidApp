@@ -9,12 +9,14 @@
     tools:context=".Connect" >
 	
    <TextView
-        android:id="@+id/heart_ratecap_display"       
+        android:id="@+id/heart_ratecap_display" 
+        android:textSize="25sp"     
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Heart Rate Cap: " />  
    <TextView
         android:id="@+id/wheel_size_display"
+        android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/heart_ratecap_display"
@@ -22,6 +24,7 @@
    
    <TextView
         android:id="@+id/top_connect"
+        android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/wheel_size_display"
@@ -29,6 +32,7 @@
     
     <TextView
         android:id="@+id/top_connect2"
+        android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_connect"
@@ -36,6 +40,7 @@
     
     <TextView
         android:id="@+id/top_connect3"
+        android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_connect2"
@@ -43,6 +48,7 @@
     
     <TextView
         android:id="@+id/ADC_display"       
+        android:textSize="25sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/top_connect3"
@@ -92,18 +98,19 @@
         android:id="@+id/send_but2"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_below="@id/edit_wheelSize"
+        android:layout_toRightOf="@+id/connect_but"
+        android:layout_below="@id/ADC_display"
         android:layout_centerHorizontal= "false"
         android:text="Begin Display"
         android:onClick="sendByte2"/>
-      
-      <Button 
-        android:id="@+id/write_test"
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content"
-        android:layout_below="@id/send_but2"
-        android:layout_centerHorizontal= "false"
-        android:text="Write Test"
-        android:onClick="writeTest"/>
+
+      <ProgressBar
+          android:id="@+id/progressBar1"
+          style="?android:attr/progressBarStyleHorizontal"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignLeft="@+id/edit_wheelSize"
+          android:layout_alignRight="@+id/top_connect2"
+          android:layout_below="@+id/set_wheel" />
 
 </RelativeLayout>
